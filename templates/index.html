@@ -913,7 +913,7 @@
             const checkoutSessionId = urlParams.get('session_id');
             const lohaSessionId = urlParams.get('loha_session');
             
-            if (checkoutSessionId &amp;&amp; lohaSessionId) {
+            if (checkoutSessionId && lohaSessionId) {
                 // Payment was successful, restore session
                 sessionId = lohaSessionId;
                 checkPaymentStatus();
@@ -932,7 +932,7 @@
             })
             .then(response => response.json())
             .then(data => {
-                if (data.success &amp;&amp; data.paid) {
+                if (data.success && data.paid) {
                     isPaid = true;
                     // Show chat section
                     document.getElementById('profileForm').style.display = 'none';
