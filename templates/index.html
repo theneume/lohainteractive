@@ -934,9 +934,12 @@
             .then(data => {
                 if (data.success && data.paid) {
                     isPaid = true;
-                    // Show chat section
+                    // Hide form, show chat
                     document.getElementById('profileForm').style.display = 'none';
                     document.getElementById('chatSection').style.display = 'block';
+                    // Clear URL parameters
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                    // Show welcome back message
                     displayMessage('assistant', 'Welcome back! Your payment was successful. Let\'s continue our conversation!');
                 }
             })
