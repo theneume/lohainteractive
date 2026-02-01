@@ -528,8 +528,8 @@ def create_checkout_session():
                 'quantity': 1,
             }],
             mode='payment',
-            success_url=request.host_url + '?session_id={CHECKOUT_SESSION_ID}&amp;loha_session=' + session_id,
-            cancel_url=request.host_url + '?canceled=true',
+            success_url='https://lohainteractive.onrender.com/?session_id={CHECKOUT_SESSION_ID}&loha_session=' + session_id,
+            cancel_url='https://lohainteractive.onrender.com/?canceled=true',
             client_reference_id=session_id,
             metadata={
                 'loha_session_id': session_id
