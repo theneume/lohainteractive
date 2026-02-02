@@ -934,11 +934,27 @@
             .then(data => {
                 if (data.success && data.paid) {
                     isPaid = true;
+                    messageCount = data.message_count || 0;
+                    
                     // Hide form, show chat
                     document.getElementById('profileForm').style.display = 'none';
                     document.getElementById('chatSection').style.display = 'block';
+                    
+                    // Restore conversation history
+                    if (data.history && data.history.length > 0) {
+                        const container = document.getElementById('chatContainer');
+                        container.innerHTML = ''; // Clear container
+                        
+                        // Restore all messages
+                        data.history.forEach(msg => {
+                            const role = msg.role === 'user' ? 'user' : 'assistant';
+                            displayMessage(role, msg.content);
+                        });
+                    }
+                    
                     // Clear URL parameters
                     window.history.replaceState({}, document.title, window.location.pathname);
+                    
                     // Show welcome back message
                     displayMessage('assistant', 'Welcome back! Your payment was successful. Let\'s continue our conversation!');
                 }
