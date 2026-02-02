@@ -13,7 +13,6 @@ app = Flask(__name__, static_folder='static', static_url_path='/static')
 GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY')
 STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY')
 STRIPE_WEBHOOK_SECRET = os.environ.get('STRIPE_WEBHOOK_SECRET')
-BASE_URL = os.environ.get('BASE_URL', 'https://lohainteractive.onrender.com')
 
 # Initialize Stripe
 stripe.api_key = STRIPE_SECRET_KEY
@@ -529,8 +528,8 @@ def create_checkout_session():
                 'quantity': 1,
             }],
             mode='payment',
-            success_url=BASE_URL + '/?session_id={CHECKOUT_SESSION_ID}&loha_session=' + session_id,
-            cancel_url=BASE_URL + '/?canceled=true',
+            success_url='https://lohadatingcoach.com/?session_id={CHECKOUT_SESSION_ID}&loha_session=' + session_id,
+            cancel_url='https://lohadatingcoach.com/?canceled=true',
             client_reference_id=session_id,
             metadata={
                 'loha_session_id': session_id
@@ -577,7 +576,7 @@ def stripe_webhook():
 
 @app.route('/api/check-payment', methods=['POST'])
 def check_payment():
-    """Check if payment was completed and return session data"""
+    """Check if payment was completed"""
     try:
         data = request.get_json()
         session_id = data.get('session_id')
@@ -585,13 +584,9 @@ def check_payment():
         if not session_id or session_id not in conversations:
             return jsonify({'success': False, 'paid': False})
         
-        session = conversations[session_id]
-        
         return jsonify({
             'success': True,
-            'paid': session['paid'],
-            'history': session['history'],
-            'message_count': session['message_count']
+            'paid': conversations[session_id]['paid']
         })
         
     except Exception as e:
