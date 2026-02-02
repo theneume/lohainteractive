@@ -577,7 +577,7 @@ def stripe_webhook():
 
 @app.route('/api/check-payment', methods=['POST'])
 def check_payment():
-    """Check if payment was completed"""
+    """Check if payment was completed and return session data"""
     try:
         data = request.get_json()
         session_id = data.get('session_id')
@@ -585,9 +585,13 @@ def check_payment():
         if not session_id or session_id not in conversations:
             return jsonify({'success': False, 'paid': False})
         
+        session = conversations[session_id]
+        
         return jsonify({
             'success': True,
-            'paid': conversations[session_id]['paid']
+            'paid': session['paid'],
+            'history': session['history'],
+            'message_count': session['message_count']
         })
         
     except Exception as e:
