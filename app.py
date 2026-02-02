@@ -13,6 +13,7 @@ app = Flask(__name__, static_folder='static', static_url_path='/static')
 GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY')
 STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY')
 STRIPE_WEBHOOK_SECRET = os.environ.get('STRIPE_WEBHOOK_SECRET')
+BASE_URL = os.environ.get('BASE_URL', 'https://lohainteractive.onrender.com')
 
 # Initialize Stripe
 stripe.api_key = STRIPE_SECRET_KEY
@@ -528,8 +529,8 @@ def create_checkout_session():
                 'quantity': 1,
             }],
             mode='payment',
-            success_url='https://lohainteractive.onrender.com/?session_id={CHECKOUT_SESSION_ID}&loha_session=' + session_id,
-            cancel_url='https://lohainteractive.onrender.com/?canceled=true',
+            success_url=BASE_URL + '/?session_id={CHECKOUT_SESSION_ID}&loha_session=' + session_id,
+            cancel_url=BASE_URL + '/?canceled=true',
             client_reference_id=session_id,
             metadata={
                 'loha_session_id': session_id
