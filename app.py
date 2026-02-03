@@ -528,8 +528,8 @@ def create_checkout_session():
                 'quantity': 1,
             }],
             mode='payment',
-            success_url='https://lohainteractive.onrender.com/?session_id={CHECKOUT_SESSION_ID}&loha_session=' + session_id,
-            cancel_url='https://lohainteractive.onrender.com/?canceled=true',
+            success_url='https://lohadatingcoach.com/?session_id={CHECKOUT_SESSION_ID}&loha_session=' + session_id,
+            cancel_url='https://lohadatingcoach.com/?canceled=true',
             client_reference_id=session_id,
             metadata={
                 'loha_session_id': session_id
@@ -586,7 +586,8 @@ def check_payment():
         
         return jsonify({
             'success': True,
-            'paid': conversations[session_id]['paid']
+            'paid': conversations[session_id]['paid'],
+            'history': conversations[session_id]['history']
         })
         
     except Exception as e:
