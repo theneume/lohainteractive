@@ -84,7 +84,7 @@ def get_archetype_advice(archetype, topic):
     except KeyError:
         return "Your unique energy is your superpower - embrace it fully."
 
-def create_contextual_greeting(profile):
+def create_contextual_greeting(profile, session_id=None):
     """Create a contextual greeting based on user's archetype and input"""
     name = profile['name']
     gender = profile['gender']
@@ -141,7 +141,7 @@ def create_contextual_greeting(profile):
     
     return greeting
 
-def build_dating_system_prompt(profile, conversation_history):
+def build_dating_system_prompt(profile, conversation_history, session_id=None):
     """Build the complete dating coach system prompt with varied content rotation"""
     natal_type = profile['natal_type']
     gender = profile['gender']
@@ -177,6 +177,12 @@ def build_dating_system_prompt(profile, conversation_history):
     # Add archetype-specific guidance
     user_info += f"\n# YOUR ARCHETYPE: {archetype.upper()}\n"
     user_info += f"{description}\n"
+    
+    # Add rotating cultural avatars every 5 messages
+    if message_count > 0 and message_count % 5 == 0:
+        ca_text, selected_cas = load_cultural_avatars(gender, session_id)
+        if ca_text:
+            user_info += ca_text
     
     # ROTATE CONTENT BASED ON CONVERSATION LENGTH TO PREVENT REPETITION
     message_count = len(conversation_history)
@@ -403,6 +409,11 @@ def load_cultural_avatars(gender, session_id=None):
             ca_text += f"Use these celebrities as examples when relevant to the conversation.\n"
             ca_text += f"Reference their dating history, quotes, or public persona when it helps illustrate a point.\n"
             ca_text += f"{'='*60}\n"
+            
+            # Update session's last_cas_mentioned
+            if session_id and session_id in conversations:
+                conversations[session_id]['last_cas_mentioned'] = selected_cas
+            
             return ca_text, selected_cas
         
         return "", []
@@ -586,7 +597,8 @@ def check_payment():
         
         return jsonify({
             'success': True,
-            'paid': conversations[session_id]['paid']
+            'paid': conversations[session_id]['paid'],
+            'history': conversations[session_id]['history']
         })
         
     except Exception as e:
@@ -639,7 +651,7 @@ def initialize():
         nickname = nicknames[0] if nicknames else "babe"
         
         # Create contextual greeting
-        greeting = create_contextual_greeting(profile)
+        greeting = create_contextual_greeting(profile, session_id)
         
         # Store session
         conversations[session_id] = {
@@ -691,7 +703,7 @@ def chat():
         session['history'].append({'role': 'user', 'content': user_message})
         
         # Build system prompt
-        system_prompt = build_dating_system_prompt(profile, session['history'])
+        system_prompt = build_dating_system_prompt(profile, session['history'], session_id)
         
         # Call AI (now with retry logic)
         response = call_gemini_api(system_prompt, user_message)
