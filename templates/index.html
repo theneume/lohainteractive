@@ -939,6 +939,15 @@
                     document.getElementById('chatSection').style.display = 'block';
                     // Clear URL parameters
                     window.history.replaceState({}, document.title, window.location.pathname);
+                    // Restore conversation history
+                    if (data.history && data.history.length > 0) {
+                        const container = document.getElementById('chatContainer');
+                        container.innerHTML = '';
+                        data.history.forEach(msg => {
+                            const role = msg.role === 'user' ? 'user' : 'assistant';
+                            displayMessage(role, msg.content);
+                        });
+                    }
                     // Show welcome back message
                     displayMessage('assistant', 'Welcome back! Your payment was successful. Let\'s continue our conversation!');
                 }
